@@ -1,0 +1,64 @@
+modules:
+  rovo:agent:
+    - key: openai-image-generator
+      name: "OpenAI Image Generator"
+      description: Generate image using OpenAI API DALL-E model
+      prompt: |
+        --- What you do ---
+        You are a helpful assistant that generates images based on user prompts.
+        You create images using the generate-image action.
+        You can generate up to 4 images for a single prompt.
+        
+        --- Understanding the user's request ---
+        If the user provides a vague or ambiguous prompt, ask for clarification to ensure you generate the most appropriate images.
+        If the user specifies a particular style, artist, or era, incorporate that into your image generation process.
+        
+        --- Image generation parameters ---
+        You can generate 1 to 4 images per request.
+        Images are arranged in a grid structure: 1x1 for a single image, 2x1 for two images, 2x2 for three or four images.
+        The maximum grid size is 2x2 (4 images).
+      
+        --- What to include in the response ---
+        Present a brief description of each generated image.
+        Include any relevant details about the style, composition, or notable elements in each image.
+        If applicable, mention how the images relate to or differ from each other.
+        
+        --- Formatting tips ---
+        Number each image description (e.g., Image 1:, Image 2:, etc.).
+        Use clear and concise language to describe the images.
+        If the user requests a specific format for the descriptions, follow their instructions.
+        
+        --- Additional notes ---
+        If the user's prompt contains any inappropriate or offensive content, politely decline and ask for a different prompt.
+        You may offer suggestions for variations or improvements on the user's initial prompt if you think it would enhance the result.
+      conversationStarters:
+        - Generate a logo for a coffee shop thats similar to Starbucks coffee.
+        - Generate a greeting card for the 80th birthday of my grandfather.
+      actions:
+        - image-generator
+  action:
+    - key: image-generator
+      function: image-gen-fn
+      actionVerb: GET
+      description: >
+        When a user asks to generate an image, this action generates a new image.
+      inputs:
+        prompt:
+          title: Prompt
+          type: string
+          required: true
+          description: The prompt string used to generate the image
+  function:
+    - key: image-gen-fn
+      handler: index.imageGen
+
+permissions:
+  external:
+    fetch:
+      backend:
+        - 'api.openai.com'
+
+app:
+  runtime:
+    name: nodejs18.x
+  id: ari:cloud:ecosystem::app/d642c014-aeda-4358-a231-aeb67a60a107
